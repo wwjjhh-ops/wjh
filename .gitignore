@@ -1,0 +1,12 @@
+
+.idea/
+CatDog_dataset/
+__pycache__/
+*.pyc
+
+*.pth
+*.pt
+*.ckpt
+
+.venv/
+venv/
