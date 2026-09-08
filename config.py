@@ -7,7 +7,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # =========================
 # 数据集路径
 # =========================
-root_dir = r"D:\pycharmprojects\CatDog_classification\CatDog_dataset\PetImages"
+root_dir = "/disk/WangJunHao/CatDogdataset/CatDog_dataset/PetImages"
 
 # =========================
 # 训练参数

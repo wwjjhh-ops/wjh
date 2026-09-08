@@ -224,6 +224,7 @@ def get_dataloaders():
         train_dataset,
         batch_size=batch_size,
         shuffle=True,
+        num_workers=8,
         pin_memory=True
     )
 
@@ -231,6 +232,7 @@ def get_dataloaders():
         val_dataset,
         batch_size=batch_size,
         shuffle=False,
+        num_workers=8,
         pin_memory=True
     )
 
@@ -238,6 +240,7 @@ def get_dataloaders():
         test_dataset,
         batch_size=batch_size,
         shuffle=False,
+        num_workers=8,
         pin_memory=True
     )
 
