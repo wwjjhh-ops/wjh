@@ -39,7 +39,7 @@ print("当前使用的 GPU 数量：", torch.cuda.device_count())
 # 3. 损失函数
 # =====================================
 
-loss_fn = nn.CrossEntropyLoss()
+loss_fn = nn.CrossEntropyLoss(label_smoothing=0.1)
 
 
 # =====================================
@@ -48,7 +48,9 @@ loss_fn = nn.CrossEntropyLoss()
 
 optimizer = torch.optim.SGD(
     vgg.parameters(),
-    lr=learning_rate
+    lr=learning_rate,
+    momentum=0.9,
+    weight_decay=5e-4
 )
 
 

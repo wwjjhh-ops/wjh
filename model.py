@@ -46,6 +46,14 @@ class VGG16_BN(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(2),
 
+            nn.Conv2d(512, 512, 3, padding=1),
+            nn.BatchNorm2d(512),
+            nn.ReLU(),
+            nn.Conv2d(512, 512, 3, padding=1),
+            nn.BatchNorm2d(512),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+
         )
 
         # 自适应平均池化
@@ -54,13 +62,13 @@ class VGG16_BN(nn.Module):
         # 分类器
         self.model2 = nn.Sequential(
 
-            nn.Linear(512, 64),
+            nn.Linear(512, 128),
 
             nn.ReLU(),
 
             nn.Dropout(0.5),
 
-            nn.Linear(64, 2)
+            nn.Linear(128, 2)
         )
 
     def forward(self, x):
