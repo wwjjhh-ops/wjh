@@ -6,6 +6,25 @@
 
 ---
 
+## 最新训练结果（2026-09-08）
+
+使用 **3 × GTX 1080 Ti 并行训练**，并在加深模型结构的同时引入 **Label Smoothing、Momentum、Weight Decay** 后：
+
+| 指标 | 结果 |
+|---|---:|
+| 实际训练轮数 | 28（触发 Early Stopping） |
+| 最佳验证集准确率 | **96.13%**（第 23 轮） |
+| 测试集准确率 | **95.734%** |
+| 测试集 Loss | **0.1326** |
+
+![Loss 曲线](loss_curve.png)
+
+![Accuracy 曲线](accuracy_curve.png)
+
+> 早期单卡版本的测试集准确率为 84.164%；本次优化后提升至 **95.734%**。
+
+---
+
 ## 1. 项目简介
 
 本项目使用猫狗图像数据集进行二分类任务：
@@ -41,10 +60,12 @@ CatDog_classification/
 │
 ├── dataset.py            # 自定义 Dataset、数据预处理
 ├── model.py              # VGG16 + BatchNorm 模型
-├── train.py              # 模型训练
+├── train.py              # 模型训练（单卡）
+├── train_multi_gpu.py    # 三卡并行训练
 ├── test.py               # 测试集评估、混淆矩阵
 ├── predict.py            # 单张图片预测
 ├── plot.py               # 训练过程可视化
+├── plot_save.py          # 将训练曲线保存为 PNG
 ├── config.py             # 项目配置
 ├── check_batchnorm.py    # BatchNorm 检查
 │
@@ -243,6 +264,8 @@ patience = 5
 ---
 
 # 11. 实验结果
+
+> 以下为早期单卡版本的实验记录；最新多卡优化版结果见文档顶部“最新训练结果”。
 
 本次实验实际训练了：
 
@@ -942,27 +965,32 @@ venv/
 
 # 29. 环境
 
-主要使用：
+训练环境（2026-09-08 远程服务器）：
 
 ```text
-Python
-PyTorch
-Torchvision
+Ubuntu 20.04
+Python 3.10.21
+PyTorch 2.7.1+cu118
+Torchvision（与 PyTorch 配套）
 NumPy
 Pillow
 Matplotlib
 ```
 
-GPU：
+GPU（3 张并行）：
 
 ```text
-NVIDIA RTX 5060
+NVIDIA GeForce GTX 1080 Ti × 3（11GB）
+Driver 535.309.01
+CUDA 12.2
 ```
 
-训练设备：
+训练方式：
 
 ```text
-CUDA
+DataParallel（三卡并行）
+DataLoader num_workers=8
+Early Stopping
 ```
 
 ---
@@ -1033,29 +1061,39 @@ Git / GitHub
 - [x] 单张图片预测
 - [x] Git 版本管理
 - [x] GitHub 远程仓库
+- [x] 三卡 DataParallel 并行训练
+- [x] DataLoader 多进程数据加载
+- [x] Label Smoothing / Weight Decay / Momentum
+- [x] 最佳验证集准确率 96.13%
 
 ---
 
 # 32. 最终结果
 
-> **VGG16 + BatchNorm 在本次猫狗二分类实验中取得了 84.164% 的测试集准确率。**
+> **VGG16 + BatchNorm（加深结构）在本次猫狗二分类实验中取得了 95.734% 的测试集准确率。**
 
 最佳验证集准确率：
 
 ```text
-84.129%
+96.13%
+```
+
+最佳验证集 Epoch：
+
+```text
+23
 ```
 
 测试集准确率：
 
 ```text
-84.164%
+95.734%
 ```
 
 测试集 Loss：
 
 ```text
-0.3646
+0.1326
 ```
 
 最佳模型：
@@ -1067,17 +1105,17 @@ vgg16_bn_best.pth
 最佳 Epoch：
 
 ```text
-40
+23
 ```
 
 混淆矩阵：
 
 ```text
-[[1603  285]
- [ 309 1554]]
+[[1800   88]
+ [  72 1791]]
 ```
 
-从训练集、验证集和测试集结果来看，模型整体训练较为稳定，具有一定的泛化能力。
+从训练集、验证集和测试集结果来看，模型整体收敛稳定，验证集与测试集准确率均达到 95% 以上，较早期单卡版本有明显提升。
 
 ---
 
@@ -1128,6 +1166,6 @@ Git / GitHub
 
 最终测试集准确率达到：
 
-# **84.164%**
+# **95.734%**
 
 这个结果也为后续学习更复杂的 CNN、迁移学习、目标检测和计算机视觉任务打下了基础。
